@@ -82,9 +82,9 @@ def lockFile(lockfile):
     try:
         fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError:
-        return False
+        return None
 
-    return True
+    return fp
 
 def main():
     usage = "usage: " + sys.argv[0] + " [options] <profile name>"
@@ -107,10 +107,10 @@ def main():
     profile = config.profiles[profile_name]
 
     # create the lock file
-    if not lockFile(profile['lock_file']):
+    lockfile = lockFile(profile['lock_file'])
+    if not lockfile:
         print("profile " + profile_name + " is locked")
         exit(0)
-
 
     # get the backup count number
     state_filename = profile['state_file']
